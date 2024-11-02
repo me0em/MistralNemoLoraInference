@@ -1,0 +1,36 @@
+ChatCompletion(
+    id='chatcmpl-AP7RumqCypL9jiDtZraUCFMLXGGzL',
+    choices=[
+        Choice(
+            finish_reason='stop',
+            index=0,
+            logprobs=None,
+            message=ChatCompletionMessage(
+                content='5 + 10 = 15',
+                refusal=None,
+                role='assistant',
+                audio=None,
+                function_call=None,
+                tool_calls=None
+            )
+        )
+    ],
+    created=1730550198,
+    model='gpt-3.5-turbo-0125',
+    object='chat.completion',
+    service_tier=None,
+    system_fingerprint=None,
+    usage=CompletionUsage(
+        completion_tokens=7,
+        prompt_tokens=13,
+        total_tokens=20,
+        completion_tokens_details=CompletionTokensDetails(
+            audio_tokens=None,
+            reasoning_tokens=0
+        ),
+        prompt_tokens_details=PromptTokensDetails(
+            audio_tokens=None,
+            cached_tokens=0
+        )
+    )
+)

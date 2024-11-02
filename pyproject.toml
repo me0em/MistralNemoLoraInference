@@ -1,12 +1,15 @@
 [tool.poetry]
-name = "mistralnemolorainference"
+name = "src"
 version = "0.1.0"
 description = ""
 authors = ["seeusoon <to.asmarkov@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.12"
+python = "^3.10"
+fastapi = "^0.115.4"
+uvicorn = "^0.32.0"
+openai = "^1.53.0"
 
 
 [build-system]
