@@ -1,0 +1,3 @@
+hf_token: "..."
+model_name: "mistralai/Mistral-Nemo-Instruct-2407"
+lora_path: "/workspace/checkpoints-600/checkpoint-600"

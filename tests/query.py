@@ -1,9 +1,9 @@
 from openai import OpenAI
 
-prompt = "the king is dead long live the king"
+prompt = "The king is dead. Long live to who?"
 
 client = OpenAI(
-    base_url="http://127.0.0.1:8001",
+    base_url="http://127.0.0.1:8005",
     api_key="token-abc123",
 )
 
