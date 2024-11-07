@@ -50,28 +50,37 @@ def generate_text(model: AutoModelForCausalLM,
     """ Tokenize query, pass it to the model,
     convert tokens to human language text and return it
     """
-    inputs = tokenizer(
-        query,
+    chat = [
+        {"role": "user", "content": query},
+    ]
+
+    tokenizer.apply_chat_template(
+        chat,
         return_tensors="pt",
         truncation=True,
         padding="max_length",
         max_length=512
     ).to(device)
     
-    attention_mask = (inputs["input_ids"] != tokenizer.pad_token_id).long().to(device)
+    attention_mask = (
+        inputs["input_ids"] != tokenizer.pad_token_id
+    ).long().to(device)
 
     with torch.no_grad():
         outputs = model.generate(
             inputs["input_ids"],
             attention_mask=attention_mask,
-            max_length=2048,
-            num_return_sequences=1
+            max_length=8000,
+            num_return_sequences=1,
+            temperture=0.3
         )
 
     generated_text = tokenizer.decode(
         outputs[0],
         skip_special_tokens=True
     )
+
+    generated_text = generated_text[len(query):]    
 
     return generated_text
 
