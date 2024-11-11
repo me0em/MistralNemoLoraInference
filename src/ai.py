@@ -54,7 +54,7 @@ def generate_text(model: AutoModelForCausalLM,
         {"role": "user", "content": query},
     ]
 
-    tokenizer.apply_chat_template(
+    inputs = tokenizer.apply_chat_template(
         chat,
         return_tensors="pt",
         truncation=True,
