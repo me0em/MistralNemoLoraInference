@@ -9,11 +9,11 @@ from transformers import (
     BitsAndBytesConfig,
     AutoTokenizer,
 )
+
 import numpy as np
 from transformers import LlamaTokenizer
 from transformers import pipeline
-from peft import get_peft_model, PeftConfig
-
+from peft import get_peft_model, PeftConfig, PeftModel
 
 
 with open("config.yml", "r") as file:
@@ -22,25 +22,26 @@ with open("config.yml", "r") as file:
 os.environ["HF_TOKEN"] = config.hf_token
 
 tokenizer = AutoTokenizer.from_pretrained(
-    config.model_name,
-    trust_remote_code=True
+    config.lora_path,
+    trust_remote_code=True,
 )
-
-tokenizer.pad_token = tokenizer.eos_token
-max_seq_length = tokenizer.model_max_length
 
 model = AutoModelForCausalLM.from_pretrained(
     config.model_name,
     token=config.hf_token,
     load_in_8bit=False,
-    torch_dtype=torch.float16,
+    torch_dtype=torch.bfloat16,
+    device_map="cuda"
 )
 
-config = PeftConfig.from_pretrained(config.lora_path)
+model.resize_token_embeddings(
+    len(tokenizer),
+    mean_resizing=False
+)
 
-model = get_peft_model(model, config)
+model.tie_weights()
+model = PeftModel.from_pretrained(model, config.lora_path)
 
-model = model.cuda()
 
 
 def generate_text(model: AutoModelForCausalLM,
@@ -58,21 +59,24 @@ def generate_text(model: AutoModelForCausalLM,
         chat,
         return_tensors="pt",
         truncation=True,
-        padding="max_length",
-        max_length=512
+        # padding="max_length",
+        max_length=512,
+        return_dict=True,
+        add_generation_prompt=True
     ).to(device)
     
-    attention_mask = (
-        inputs["input_ids"] != tokenizer.pad_token_id
-    ).long().to(device)
+    # attention_mask = (
+    #     inputs["input_ids"] != tokenizer.pad_token_id
+    # ).long().to(device)
 
     with torch.no_grad():
         outputs = model.generate(
-            inputs["input_ids"],
-            attention_mask=attention_mask,
-            max_length=8000,
+            **inputs,
+            # attention_mask=attention_mask,
+            # max_length=100,
+            max_new_tokens=200,
             num_return_sequences=1,
-            temperture=0.3
+            temperature=0.3
         )
 
     generated_text = tokenizer.decode(
